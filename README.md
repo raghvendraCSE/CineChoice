@@ -11,8 +11,7 @@ This application allows users to search for movies, view detailed movie informat
 
 ## 🚀 Live Demo
 
-🔗https://github.com/raghvendraCSE/CineChoice/
-
+🔗https://raghvendracse.github.io/CineChoice/
 ---
 
 ## 📌 Features
