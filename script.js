@@ -8,6 +8,8 @@ const closeModal = document.getElementById("closeModal");
 const movieContainer = document.getElementById("movies");
 const searchInput = document.getElementById("search");
 
+let movieCache = {};
+
 /* =========================
    FETCH MOVIES (SEARCH)
 ========================= */
@@ -39,15 +41,13 @@ function showMovies(movies) {
             <button class="watch-btn">❤️ Watchlist</button>
         `;
 
-        /* Open Details Modal */
         movieDiv.addEventListener("click", () => {
             getMovieDetails(movie.imdbID);
         });
 
-        /* Watchlist Button */
         const watchBtn = movieDiv.querySelector(".watch-btn");
         watchBtn.addEventListener("click", (e) => {
-            e.stopPropagation(); // Prevent modal opening
+            e.stopPropagation();
             addToWatchlist(movie.imdbID);
         });
 
@@ -58,15 +58,14 @@ function showMovies(movies) {
 /* =========================
    MOVIE DETAILS MODAL
 ========================= */
-let movieCache = {};
-
 async function getMovieDetails(id) {
 
-    // Open modal instantly
-    modal.style.display = "block";
+    // Open modal properly
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+
     modalDetails.innerHTML = "<h2>Loading...</h2>";
 
-    // If already fetched before, use cache
     if (movieCache[id]) {
         displayDetails(movieCache[id]);
         return;
@@ -76,7 +75,7 @@ async function getMovieDetails(id) {
         const res = await fetch(`${baseURL}?apikey=${apiKey}&i=${id}`);
         const data = await res.json();
 
-        movieCache[id] = data; // Save in cache
+        movieCache[id] = data;
         displayDetails(data);
 
     } catch (error) {
@@ -95,36 +94,25 @@ function displayDetails(data) {
         <p><b>📝 Plot:</b> ${data.Plot}</p>
     `;
 }
-// async function getMovieDetails(id) {
-//     const res = await fetch(`${baseURL}?apikey=${apiKey}&i=${id}`);
-//     const data = await res.json();
-
-//     modalDetails.innerHTML = `
-//         <h2>${data.Title}</h2>
-//         <img src="${data.Poster}" width="200">
-//         <p><b>⭐ IMDb:</b> ${data.imdbRating}</p>
-//         <p><b>🎭 Genre:</b> ${data.Genre}</p>
-//         <p><b>🎬 Director:</b> ${data.Director}</p>
-//         <p><b>👥 Actors:</b> ${data.Actors}</p>
-//         <p><b>📝 Plot:</b> ${data.Plot}</p>
-//     `;
-
-//     modal.style.display = "block";
-// }
-
-// /* Close Modal */
-// closeModal.onclick = () => {
-//     modal.style.display = "none";
-// };
-
-// window.onclick = (event) => {
-//     if (event.target === modal) {
-//         modal.style.display = "none";
-//     }
-// };
 
 /* =========================
-   WATCHLIST (LOCAL STORAGE)
+   CLOSE MODAL (FIXED)
+========================= */
+function closeModalFunction() {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto";
+}
+
+closeModal.addEventListener("click", closeModalFunction);
+
+modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+        closeModalFunction();
+    }
+});
+
+/* =========================
+   WATCHLIST
 ========================= */
 function addToWatchlist(id) {
     let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
@@ -138,33 +126,6 @@ function addToWatchlist(id) {
     }
 }
 
-/* Optional: Show Watchlist */
-async function showWatchlist() {
-    movieContainer.innerHTML = "";
-    let watchlist = JSON.parse(localStorage.getItem("watchlist")) || [];
-
-    if (watchlist.length === 0) {
-        movieContainer.innerHTML = "<h2>Your Watchlist is Empty</h2>";
-        return;
-    }
-
-    for (let id of watchlist) {
-        const res = await fetch(`${baseURL}?apikey=${apiKey}&i=${id}`);
-        const data = await res.json();
-
-        const movieDiv = document.createElement("div");
-        movieDiv.classList.add("movie");
-
-        movieDiv.innerHTML = `
-            <img src="${data.Poster}">
-            <h3>${data.Title}</h3>
-            <p>⭐ ${data.imdbRating}</p>
-        `;
-
-        movieContainer.appendChild(movieDiv);
-    }
-}
-
 /* =========================
    SEARCH EVENT
 ========================= */
@@ -174,17 +135,6 @@ searchInput.addEventListener("keyup", e => {
         if (searchTerm) {
             getMovies(searchTerm);
         }
-    }
-});
-// Close button click
-closeModal.addEventListener("click", () => {
-    modal.style.display = "none";
-});
-
-// Close when clicking outside modal content
-modal.addEventListener("click", (event) => {
-    if (event.target === modal) {
-        modal.style.display = "none";
     }
 });
 
