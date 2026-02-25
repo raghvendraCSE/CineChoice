@@ -52,7 +52,7 @@ input {
   z-index: 1000;
 
   /* Important for centering */
-  display: flex;
+  
   justify-content: center;
   align-items: center;
 }
