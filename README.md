@@ -55,7 +55,9 @@ movie-app/
 ├── index.html
 ├── style.css
 ├── script.js
+├── license
 └── README.md
+
 ```
 
 ---
@@ -130,6 +132,11 @@ The application is designed using CSS Grid and flexible layouts to ensure compat
 
 **Raghavendra Nath Chaturvedi**  
 B.Tech Computer Science & Engineering
+
+---
+
+## License
+This project is licensed under the MIT License.
 
 ---
 
